@@ -17,18 +17,31 @@ package org.sullytestgenerator.sully;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sullytestgenerator.sully.katalon.KatalonTestFormatter;
+import org.sullytestgenerator.sully.command.AllSeleniumCommands;
+import org.sullytestgenerator.sully.command.SullyCommand;
+import org.sullytestgenerator.sully.output.SullyTestFormatter;
+import org.sullytestgenerator.sully.output.katalon.KatalonTestFormatter;
 
 /**
- * SullyTestBase
+ * SullyTestBase is the base class for SullyTestGenerator. Extend this class
+ * with the tests needed by your project.
+ * 
+ * By default the test formatter is the KatalonTestFormatter. To change this,
+ * create another test formatter that implements SullyTestFormatter and then
+ * call the SullyTestBase setSullyTestFormatter() method before the call to
+ * outputCommands().
+ * 
+ * For an example, see GoogleSullyTest.java
+ * 
  * 
  * @author JavaJeffG
  *
  */
-public class SullyTestBase implements SullyTestFormatter {
+public class SullyTestBase extends AllSeleniumCommands implements SullyTestFormatter {
 
    private static final String OPEN_TEST_SUITE = "openTestSuite";
 
@@ -43,6 +56,10 @@ public class SullyTestBase implements SullyTestFormatter {
    // Sleep (in msec) when running 'highlight' commands.
    private int highlightPauseMsec = 200;
 
+   // The base used for the shortPause(), etc. commands.
+   // Adjusting this will speed up/ slow down those commands.
+   private int sleepCommandBaseMsec = 1000;
+
    // By default use the KatalonTestFormatter.
    private SullyTestFormatter sullyTestFormatter = new KatalonTestFormatter();
 
@@ -52,6 +69,14 @@ public class SullyTestBase implements SullyTestFormatter {
 
    public void setHighlightPauseMsec(int highlightPauseMsec) {
       this.highlightPauseMsec = highlightPauseMsec;
+   }
+
+   public int getSleepCommandBaseMsec() {
+      return sleepCommandBaseMsec;
+   }
+
+   public void setSleepCommandBaseMsec(int sleepCommandBaseMsec) {
+      this.sleepCommandBaseMsec = sleepCommandBaseMsec;
    }
 
    public void setSullyTestFormatter(SullyTestFormatter sullyTestFormatter) {
@@ -132,7 +157,7 @@ public class SullyTestBase implements SullyTestFormatter {
       System.out.println("------------------------------------------------------------------------------\n");
    }
 
-   private List<String> formatAllCommands() {
+   protected List<String> formatAllCommands() {
       List<String> result = new ArrayList<>();
 
       for (SullyCommand nextCommand : commands) {
@@ -150,9 +175,75 @@ public class SullyTestBase implements SullyTestFormatter {
          else if (CLOSE_TEST.equals(commandName)) {
             formatCloseTest(result);
          }
+         else {
+            formatCommand(result, nextCommand);
+         }
       }
 
       return result;
    }
+
+   @Override
+   protected void addCommand(String command, String arg1, String arg2) {
+      commands.add(new SullyCommand(command, arg1, arg2));
+   }
+
+   // -----------------------------------------------------------------------------------
+   // Comment 'commands'.
+
+   public void comment(String comment) {
+      command_echo("-- " + comment + " --");
+   }
+
+   public void commentBlock(String comment) {
+      commentDashed();
+      commentDashed();
+      comment(comment);
+      commentDashed();
+      commentDashed();
+   }
+
+   public void commentDashed() {
+      command_echo("---------------------------------------------");
+   }
+
+   // -----------------------------------------------------------------------------------
+   // Sleep helper methods.
+
+   public void command_pause(double sleepMsec) {
+      DecimalFormat df = new DecimalFormat("###");
+      String sleepMsecRounded = df.format(sleepMsec);
+
+      command_pause(sleepMsecRounded);
+   }
+
+   public void command_pause(int sleepMsec) {
+      command_pause("" + sleepMsec);
+   }
+
+   public void longPause() {
+      // 5 seconds in mSec.
+      command_pause(5.000 * getSleepCommandBaseMsec());
+   }
+
+   public void shortPause() {
+      // 1 second in mSec.
+      command_pause(1.000 * getSleepCommandBaseMsec());
+   }
+
+   public void verySortPause() {
+      // 0.25 seconds in mSec.
+      command_pause(0.250 * getSleepCommandBaseMsec());
+   }
+
+   public void tinyPause() {
+      // 0.01 seconds in mSec.
+      command_pause(0.010 * getSleepCommandBaseMsec());
+   }
+
+   // -----------------------------------------------------------------------------------
+   // Additional TESTCASE operations.
+
+   // -----------------------------------------------------------------------------------
 
 }

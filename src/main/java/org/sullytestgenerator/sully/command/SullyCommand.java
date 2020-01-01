@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sullytestgenerator.sully;
+package org.sullytestgenerator.sully.command;
 
 /**
  * SullyCommand
+ * 
+ * SullyCommands are the normal Selenium (IDE) commands plus a couple extra
+ * 'commands', for managing the opening and closing of tests and test suites,
+ * e.g., openTestSuite, closeTestSuite, openTest, closeTest.
  * 
  * @author JavaJeffG
  *
@@ -49,6 +53,11 @@ public class SullyCommand {
 
    public String getArg2() {
       return arg2;
+   }
+
+   @Override
+   public String toString() {
+      return "SullyCommand [commandName=" + commandName + ", arg1=" + arg1 + ", arg2=" + arg2 + "]";
    }
 
 }

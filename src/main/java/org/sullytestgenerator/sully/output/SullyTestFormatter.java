@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sullytestgenerator.sully;
+package org.sullytestgenerator.sully.output;
 
 import java.util.List;
+
+import org.sullytestgenerator.sully.command.SullyCommand;
 
 /**
  * SullyTestFormatter
