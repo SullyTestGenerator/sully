@@ -43,16 +43,17 @@ public class GoogleSullyTest extends SullyTestBase {
 
       createTest_GoogleSearch();
 
+      createTest_GoogleSearch2();
+
       closeTestSuite();
 
       outputToFile(outputfilename);
    }
 
    protected void createTest_GoogleSearch() {
-      openTest("Google search - Selenium IDE");
+      openTest("Test 1 - Google search - Selenium IDE");
 
-      commentDashed();
-      comment("Test of Google search: 'Selenium IDE'");
+      commentBlock("Test of Google search: 'Selenium IDE'");
 
       command_open("https://google.com");
       command_waitForTextPresent("Store");
@@ -66,9 +67,9 @@ public class GoogleSullyTest extends SullyTestBase {
 
       comment("Highlight 'Google Search' button twice.");
       command_highlight(SEARCH_BUTTON);
-      verySortPause();
+      veryShortPause();
       command_highlight(SEARCH_BUTTON);
-      verySortPause();
+      veryShortPause();
       commentDashed();
 
       command_click(SEARCH_BUTTON);
@@ -77,6 +78,35 @@ public class GoogleSullyTest extends SullyTestBase {
       command_assertTextPresent("Getting started with Selenium IDE requires no");
 
       commentDashed();
+
+      closeTest();
+   }
+
+   protected void createTest_GoogleSearch2() {
+      openTest("Test 2 - Google search - Selenium IDE");
+
+      command_echo("---------------------------------------------");
+      command_echo("---------------------------------------------");
+      command_echo("-- Test of Google search: 'Selenium IDE' --");
+      command_echo("---------------------------------------------");
+      command_echo("---------------------------------------------");
+      command_open("https://google.com");
+      command_waitForTextPresent("Store");
+      longPause();
+      command_highlight("//input[@title='Search']");
+      shortPause();
+      command_type("//input[@title='Search']", "Selenium IDE");
+      command_pause("1000");
+      command_echo("-- Highlight 'Google Search' button twice. --");
+      command_highlight("//input[@value='Google Search']");
+      veryShortPause();
+      command_highlight("//input[@value='Google Search']");
+      tinyPause();
+      command_echo("---------------------------------------------");
+      command_click("//input[@value='Google Search']");
+      command_waitForTextPresent("Getting started with Selenium IDE requires no");
+      command_assertTextPresent("Getting started with Selenium IDE requires no");
+      command_echo("---------------------------------------------");
 
       closeTest();
    }

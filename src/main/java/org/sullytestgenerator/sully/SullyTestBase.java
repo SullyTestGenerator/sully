@@ -43,6 +43,12 @@ import org.sullytestgenerator.sully.output.katalon.KatalonTestFormatter;
  */
 public class SullyTestBase extends AllSeleniumCommands implements SullyTestFormatter {
 
+   public static final String COMMENT_DASHED_LINE = "---------------------------------------------";
+
+   public static final String COMMENT_POSTFIX = " --";
+
+   public static final String COMMENT_PREFIX = "-- ";
+
    private static final String OPEN_TEST_SUITE = "openTestSuite";
 
    private static final String CLOSE_TEST_SUITE = "closeTestSuite";
@@ -176,6 +182,7 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
             formatCloseTest(result);
          }
          else {
+            // Regular Selenium command.
             formatCommand(result, nextCommand);
          }
       }
@@ -192,7 +199,7 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
    // Comment 'commands'.
 
    public void comment(String comment) {
-      command_echo("-- " + comment + " --");
+      command_echo(COMMENT_PREFIX + comment + COMMENT_POSTFIX);
    }
 
    public void commentBlock(String comment) {
@@ -204,7 +211,7 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
    }
 
    public void commentDashed() {
-      command_echo("---------------------------------------------");
+      command_echo(COMMENT_DASHED_LINE);
    }
 
    // -----------------------------------------------------------------------------------
@@ -231,7 +238,7 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
       command_pause(1.000 * getSleepCommandBaseMsec());
    }
 
-   public void verySortPause() {
+   public void veryShortPause() {
       // 0.25 seconds in mSec.
       command_pause(0.250 * getSleepCommandBaseMsec());
    }
@@ -243,6 +250,54 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
 
    // -----------------------------------------------------------------------------------
    // Additional TESTCASE operations.
+
+   public void highlightAndAssertText(String element, String text) {
+      command_highlight(element);
+      command_pause(getHighlightPauseMsec());
+      command_assertText(element, text);
+   }
+
+   public void highlightAndClick(String element) {
+      command_highlight(element);
+      command_pause(getHighlightPauseMsec());
+      command_click(element);
+   }
+
+   public void highlightAndSelect(String element, String text) {
+      command_highlight(element);
+      command_pause(getHighlightPauseMsec());
+      command_select(element, text);
+   }
+
+   public void highlightAndType(String element, String text) {
+      command_highlight(element);
+      command_pause(getHighlightPauseMsec());
+      command_type(element, text);
+   }
+
+   public void highlightTwiceAndAssertText(String element, String text) {
+      command_highlight(element);
+      command_pause(getHighlightPauseMsec());
+      highlightAndAssertText(element, text);
+   }
+
+   public void highlightTwiceAndClick(String element) {
+      command_highlight(element);
+      command_pause(getHighlightPauseMsec());
+      highlightAndClick(element);
+   }
+
+   public void highlightTwiceAndSelect(String element, String text) {
+      command_highlight(element);
+      command_pause(getHighlightPauseMsec());
+      highlightAndSelect(element, text);
+   }
+
+   public void highlightTwiceAndType(String element, String text) {
+      command_highlight(element);
+      command_pause(getHighlightPauseMsec());
+      highlightAndType(element, text);
+   }
 
    // -----------------------------------------------------------------------------------
 
