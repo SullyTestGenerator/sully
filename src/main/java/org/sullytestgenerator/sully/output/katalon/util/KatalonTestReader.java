@@ -25,11 +25,15 @@ import org.sullytestgenerator.sully.SullyTestBase;
 
 public class KatalonTestReader {
 
-   private static final String BASE_FILE_DIRECTORY = "C:\\";
+   private static final String BASE_FILE_DIRECTORY = "C:\\Users\\Jane\\AppData\\Local\\Temp\\";
 
-   private static final String testFileName = BASE_FILE_DIRECTORY + "GoogleSullyTest_GEN3461932608411652767.html";
+   private static final String testFileName = BASE_FILE_DIRECTORY + "GoogleSullyTest_GEN3908954664261477856.html";
 
    private static final boolean DEBUG = false;
+
+   private static final String COMMENT_DASHED = "commentDashed();";
+   private static final String COMMAND_HIGHLIGHT = "command_highlight(\"";
+   private static final String COMMAND_PAUSE = "command_pause(\"";
 
    class KatalonTestCase {
       public String name = "";
@@ -81,13 +85,16 @@ public class KatalonTestReader {
       catch (Exception e) {
          e.printStackTrace();
       }
+
+      filterMultiLineCommands(testCases);
+
       System.out.println("------------------------------------------------------------------");
       outputTestCases(testCases);
       System.out.println("------------------------------------------------------------------");
       System.out.println("...done.\n");
    }
 
-   private String parseCommand(String nextLine, String patternString) {
+   protected String parseCommand(String nextLine, String patternString) {
       Pattern pattern = Pattern.compile(patternString);
       Matcher matcher = pattern.matcher(nextLine);
       matcher.matches();
@@ -96,7 +103,7 @@ public class KatalonTestReader {
       return result;
    }
 
-   private void outputTestCases(List<KatalonTestCase> testCases) {
+   protected void outputTestCases(List<KatalonTestCase> testCases) {
       for (KatalonTestCase nextTestCase : testCases) {
          System.out.println("");
          System.out.println("-----------------------------");
@@ -110,7 +117,7 @@ public class KatalonTestReader {
       }
    }
 
-   private String determineCommand(String command, String arg1, String arg2Display) {
+   protected String determineCommand(String command, String arg1, String arg2Display) {
       String nextCommand = "command_" + command + "(\"" + arg1 + "\"" + arg2Display + ");";
 
       if (command.equals("echo") && SullyTestBase.COMMENT_DASHED_LINE.equals(arg1)) {
@@ -138,6 +145,113 @@ public class KatalonTestReader {
       }
 
       return nextCommand;
+   }
+
+   protected void filterMultiLineCommands(List<KatalonTestCase> testCases) {
+      for (KatalonTestCase nextTestCase : testCases) {
+         List<String> commands = nextTestCase.commands;
+         List<String> finalCommandList = new ArrayList<String>();
+
+         int counter = 0;
+
+         while (counter < commands.size()) {
+            String nextCommand = commands.get(counter);
+            int remainingCommands = commands.size() - counter;
+
+            boolean isCommentBlock = checkCommentBlock(nextCommand, commands, counter, remainingCommands);
+
+            if (isCommentBlock) {
+               nextCommand = commands.get(counter + 2);
+               nextCommand = nextCommand.replace("comment(\"", "commentBlock(\"");
+               counter = counter + 4;
+            }
+
+            boolean isHighlightTwice = checkHighLightTwice(nextCommand, commands, counter, remainingCommands);
+
+            if (isHighlightTwice) {
+               nextCommand = commands.get(counter + 4);
+               int underscore = nextCommand.indexOf("_");
+               String finalCommand = "highlightTwiceAnd";
+               finalCommand += nextCommand.substring(underscore + 1, underscore + 2).toUpperCase();
+               finalCommand += nextCommand.substring(underscore + 2);
+
+               nextCommand = finalCommand;
+               counter = counter + 4;
+            }
+
+            boolean isHighlight = checkHighLight(nextCommand, commands, counter, remainingCommands);
+
+            if (isHighlight) {
+               nextCommand = commands.get(counter + 2);
+               int underscore = nextCommand.indexOf("_");
+               String finalCommand = "highlightAnd";
+               finalCommand += nextCommand.substring(underscore + 1, underscore + 2).toUpperCase();
+               finalCommand += nextCommand.substring(underscore + 2);
+
+               nextCommand = finalCommand;
+               counter = counter + 2;
+            }
+
+            finalCommandList.add(nextCommand);
+
+            counter++;
+         }
+         nextTestCase.commands = finalCommandList;
+      }
+   }
+
+   protected boolean checkCommentBlock(String nextCommand, List<String> commands, int counter, int remainingCommands) {
+      boolean result = false;
+
+      if (nextCommand.equals(COMMENT_DASHED) && remainingCommands >= 4) {
+         if (commands.get(counter + 1).equals(COMMENT_DASHED) && commands.get(counter + 3).equals(COMMENT_DASHED)
+               && commands.get(counter + 4).equals(COMMENT_DASHED)) {
+
+            if (commands.get(counter + 2).startsWith("comment(")) {
+               result = true;
+            }
+         }
+      }
+
+      return result;
+   }
+
+   protected boolean checkHighLightTwice(String nextCommand, List<String> commands, int counter, int remainingCommands) {
+      boolean result = false;
+
+      if (nextCommand.startsWith(COMMAND_HIGHLIGHT) && remainingCommands >= 4) {
+         if (commands.get(counter + 1).startsWith(COMMAND_PAUSE) && commands.get(counter + 2).startsWith(COMMAND_HIGHLIGHT)
+               && commands.get(counter + 3).startsWith(COMMAND_PAUSE)) {
+
+            result = isSpecialHighlightCommand(commands.get(counter + 4));
+         }
+      }
+
+      return result;
+   }
+
+   protected boolean checkHighLight(String nextCommand, List<String> commands, int counter, int remainingCommands) {
+      boolean result = false;
+
+      if (nextCommand.startsWith(COMMAND_HIGHLIGHT) && remainingCommands >= 2) {
+         if (commands.get(counter + 1).startsWith(COMMAND_PAUSE)) {
+
+            result = isSpecialHighlightCommand(commands.get(counter + 2));
+         }
+      }
+
+      return result;
+   }
+
+   protected boolean isSpecialHighlightCommand(String command) {
+      boolean result = false;
+
+      if (command.startsWith("command_assertText") || command.startsWith("command_click") || command.startsWith("command_select")
+            || command.startsWith("command_type")) {
+         result = true;
+      }
+
+      return result;
    }
 
    public static void main(String[] args) {

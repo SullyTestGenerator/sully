@@ -42,7 +42,6 @@ public class GoogleSullyTest extends SullyTestBase {
       openTestSuite("GoogleSullyTestSuite");
 
       createTest_GoogleSearch();
-
       createTest_GoogleSearch2();
 
       closeTestSuite();
@@ -72,7 +71,11 @@ public class GoogleSullyTest extends SullyTestBase {
       veryShortPause();
       commentDashed();
 
-      command_click(SEARCH_BUTTON);
+      highlightTwiceAndClick(SEARCH_BUTTON);
+
+      commentDashed();
+
+      highlightAndClick(SEARCH_BUTTON);
 
       command_waitForTextPresent("Getting started with Selenium IDE requires no");
       command_assertTextPresent("Getting started with Selenium IDE requires no");
