@@ -49,6 +49,8 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
 
    public static final String COMMENT_PREFIX = "-- ";
 
+   public static final String FILE_SEPARATOR = System.getProperty("file.separator");
+
    private static final String OPEN_TEST_SUITE = "openTestSuite";
 
    private static final String CLOSE_TEST_SUITE = "closeTestSuite";
@@ -158,6 +160,20 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
          e.printStackTrace();
          throw new RuntimeException("Error", e);
       }
+
+      int fileNameIndex = filename.lastIndexOf(FILE_SEPARATOR);
+
+      if (fileNameIndex == -1) {
+         fileNameIndex = filename.lastIndexOf("/");
+      }
+
+      if (fileNameIndex == -1) {
+         fileNameIndex = filename.lastIndexOf("\\");
+      }
+
+      System.out.println(filename.substring(0, fileNameIndex));
+      System.out.println(filename.substring(fileNameIndex + 1));
+      System.out.println("-----------------------------------\n");
 
       System.out.println("\nDone outputing test file to: " + filename + "\n");
       System.out.println("------------------------------------------------------------------------------\n");
