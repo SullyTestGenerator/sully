@@ -20,7 +20,8 @@ import java.util.List;
 import org.sullytestgenerator.sully.command.SullyCommand;
 
 /**
- * SullyTestFormatter
+ * SullyTestFormatter - Interface used by outputCommands() to write out commands
+ * in a format used by some web test tool.
  * 
  * @author JavaJeffG
  *

@@ -41,8 +41,8 @@ import org.sullytestgenerator.sully.output.SullyTestFormatter;
  * One nice feature of the Katalon Recorder tool is that it supports pretty much
  * all of the original Selenium IDE commands (back when Selenium IDE only worked
  * as a plug-in for Firefox). Supported commands include the 'present' commands
- * (e.g., assertTextPresent) which is not available in the latest Selenium IDE
- * tool.
+ * (e.g., assertTextPresent) which is not available in the latest version of the
+ * Selenium IDE tool.
  * 
  * The Selenium IDE file format had one 'test case' per file. The Katalon
  * Recorder tool file format has one 'test suite' per file, with one or more

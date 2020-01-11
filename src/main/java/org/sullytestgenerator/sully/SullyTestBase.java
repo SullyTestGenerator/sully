@@ -35,7 +35,8 @@ import org.sullytestgenerator.sully.output.katalon.KatalonTestFormatter;
  * call the SullyTestBase setSullyTestFormatter() method before the call to
  * outputCommands().
  * 
- * For an example, see GoogleSullyTest.java
+ * For an example of a 'Sully' test see: 
+ * org.sullytestgenerator.sully.example.GoogleSullyTest.java
  * 
  * 
  * @author JavaJeffG

@@ -19,16 +19,14 @@ package org.sullytestgenerator.sully.command;
  * SullyCommand
  * 
  * SullyCommands are the normal Selenium (IDE) commands plus a couple extra
- * 'commands', for managing the opening and closing of tests and test suites,
- * e.g., openTestSuite, closeTestSuite, openTest, closeTest.
+ * 'commands'. These extra commands are for managing the opening and closing 
+ * of tests and test suites, e.g., openTestSuite, closeTestSuite, openTest, 
+ * closeTest.
  * 
  * @author JavaJeffG
  *
  */
 public class SullyCommand {
-
-   // NOTE: SullyCommands are the normal Selenium (IDE) commands plus a couple
-   // extra 'commands', e.g., openTestSuite, closeTestSuite, openTest, closeTest.
 
    private String commandName = null;
 

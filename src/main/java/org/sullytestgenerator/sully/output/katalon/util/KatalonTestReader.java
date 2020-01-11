@@ -25,19 +25,30 @@ import org.sullytestgenerator.sully.SullyTestBase;
 
 /**
  * KatalonTestReader can be used to read in a Katalon test suite file to list
- * the corresponding 'Sully' commands.  A Katalon test suite file is in HTML
- * format where the test cases are represented as HTML table elements.  'Sully'
+ * the corresponding 'Sully' commands. A Katalon test suite file is in HTML
+ * format where the test cases are represented as HTML table elements. 'Sully'
  * commands are just Java method calls.
  * 
- * A common create-then-modify test process is: 
+ * A common create-then-modify test process is:
  * 
- * 1. Create a simple 'Sully' test by extending the SullyTestBase class. 
- * 2. Run the SullyTestBase outputToFile() method to output a Katalon test suite file. 
- * 3. Read the Katalon test suite file into Katalon IDE. 
- * 4. Use Katalon IDE to run/modify/extend the test steps. 
- * 5. Save the modified Katalon test suite. 
- * 6. Use KatalonTestReader to read in the modified test suite and list the 'Sully' commands. 
+ * 1. Create a simple 'Sully' test by extending the SullyTestBase class.
+ * 
+ * 2. Run the SullyTestBase outputToFile() method to output a Katalon test suite
+ * file.
+ * 
+ * 3. Read the Katalon test suite file into Katalon Recorder tool, see:
+ * https://www.katalon.com/katalon-recorder-ide
+ * 
+ * 4. Use Katalon Reader tool to run/modify/extend the test steps.
+ * 
+ * 5. Save the modified Katalon test suite.
+ * 
+ * 6. Use KatalonTestReader to read in the modified test suite and list the
+ * 'Sully' commands.
+ * 
  * 7. Copy any modified/new 'Sully' commands into original 'Sully' test.
+ * 
+ * See the main() method below for how to pass in the two required arguments.
  * 
  * 
  * @author JavaJeffG
@@ -195,7 +206,7 @@ public class KatalonTestReader {
                nextCommand = finalCommand;
                counter = counter + 4;
             }
-            
+
             // Check for single Highlight compound command.
             boolean isHighlight = checkHighLight(nextCommand, commands, counter, remainingCommands);
 
@@ -276,6 +287,7 @@ public class KatalonTestReader {
     * KatalonTestReader main() needs two values passed in:
     * 
     * 1. The directory path of the file to be read.
+    * 
     * 2. The simple filename of the file to be read.
     * 
     * Any additional arguments are ignored.
@@ -302,9 +314,8 @@ public class KatalonTestReader {
       else {
          String path = args[0].trim();
 
-         if (!path.endsWith(SullyTestBase.FILE_SEPARATOR) && !path.endsWith("\\") 
-               && !path.endsWith("/")) {
-            
+         if (!path.endsWith(SullyTestBase.FILE_SEPARATOR) && !path.endsWith("\\") && !path.endsWith("/")) {
+
             path += SullyTestBase.FILE_SEPARATOR;
          }
          String filename = args[1].trim();

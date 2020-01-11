@@ -22,6 +22,8 @@ import org.sullytestgenerator.sully.SullyTestBase;
 
 public class GoogleSullyTest extends SullyTestBase {
 
+   public static final boolean CREATE_AS_TEMP_FILE = true;
+
    public static final String SEARCH_BUTTON = "//input[@value='Google Search']";
    public static final String SEARCH_TEXTFIELD = "//input[@title='Search']";
 
@@ -29,28 +31,43 @@ public class GoogleSullyTest extends SullyTestBase {
       // Note: I usually put "_GEN" on the file name to highlight
       // that this is a generated file and any changes may be overwritten.
 
+      // Full filename used if CREATE_AS_TEMP_FILE is false.
       String outputfilename = "C:/GoogleSullyTest_GEN.html";
 
-      try {
-         File temp = File.createTempFile("GoogleSullyTest_GEN", ".html");
-         outputfilename = temp.getAbsolutePath();
-      }
-      catch (IOException e) {
-         e.printStackTrace();
+      if (CREATE_AS_TEMP_FILE) {
+         try {
+            File temp = File.createTempFile("GoogleSullyTest_GEN", ".html");
+            outputfilename = temp.getAbsolutePath();
+         }
+         catch (IOException e) {
+            e.printStackTrace();
+         }
       }
 
+      // Open the overall test suite.
       openTestSuite("GoogleSullyTestSuite");
 
+      // Call 'createTest' methods to create individual test cases.
       createTest_GoogleSearch();
       createTest_GoogleSearch2();
 
+      // Close the overall test suite.
       closeTestSuite();
 
+      // Generate the output.
+      // By default, this method uses the KatalonTestFormatter
+      // to produce Katalon IDE tests.
       outputToFile(outputfilename);
    }
 
    protected void createTest_GoogleSearch() {
+      // ---------------------------------------------------
+      // Open the test case.
       openTest("Test 1 - Google search - Selenium IDE");
+
+      // ---------------------------------------------------
+      // Add a bunch of Sully comments and commands.
+      // For a fully list of commands, see: AllSeleniumCommands.java
 
       commentBlock("Test of Google search: 'Selenium IDE'");
 
@@ -82,6 +99,8 @@ public class GoogleSullyTest extends SullyTestBase {
 
       commentDashed();
 
+      // ---------------------------------------------------
+      // Close the test case.
       closeTest();
    }
 
