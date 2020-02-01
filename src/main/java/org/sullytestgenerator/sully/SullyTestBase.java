@@ -16,6 +16,7 @@
 package org.sullytestgenerator.sully;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import org.sullytestgenerator.sully.output.katalon.KatalonTestFormatter;
  * call the SullyTestBase setSullyTestFormatter() method before the call to
  * outputCommands().
  * 
- * For an example of a 'Sully' test see: 
+ * For an example of a 'Sully' test see:
  * org.sullytestgenerator.sully.example.GoogleSullyTest.java
  * 
  * 
@@ -141,6 +142,72 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
 
    // -----------------------------------------------------------------------------------
 
+   /**
+    * Outputs to a Java 'temp' file with the chose filenamePrefix
+    * and a filename extension of ".html".
+    * 
+    * e.g.,
+    * 
+    * outputToTempHtmlFile("GoogleSullyTest_GEN");
+    * 
+    * C:\Users\Stephen\AppData\Local\Temp\GoogleSullyTest_GEN4271280384385216753.html
+    * 
+    * @param filenamePrefix
+    */
+   public void outputToTempHtmlFile(String filenamePrefix) {
+      outputToTempFile(filenamePrefix, ".html");
+   }
+       
+   /**
+    * Outputs to a Java 'temp' file with the chose filenamePrefix and fileExtension.
+    * 
+    * e.g.,
+    * 
+    * outputToTempFile("XYZ_login_test", ".txt");
+    * 
+    * C:\Users\Stephen\AppData\Local\Temp\XYZ_login_test4271280384385216753.txt
+    * 
+    * @param filenamePrefix
+    * @param fileExtension
+    */
+   public void outputToTempFile(String filenamePrefix, String fileExtension) {
+      String outputfilename = null;
+
+      try {
+         File temp = File.createTempFile(filenamePrefix, fileExtension);
+         outputfilename = temp.getAbsolutePath();
+      }
+      catch (IOException e) {
+         e.printStackTrace();
+      }
+
+      outputToFile(outputfilename);
+   }
+
+   /**
+    * Useful for storing output files in a single directory.
+    * 
+    * e.g., final String ALL_MY_SELENIUM_FILES = "C:/temp/seleniumFiles/";
+    * 
+    * outputToFile(ALL_MY_SELENIUM_FILES, "MyFirstSeleniumTest.html");
+    * 
+    * @param path
+    * @param shortFilename (with file extension) - e.g. "MyTest.html"
+    */
+   public void outputToFile(String path, String shortFilename) {
+      if (path != null && (path.endsWith("/") || path.endsWith("\\") || path.endsWith(File.pathSeparator))) {
+         path = path.substring(0, path.length() - 1);
+      }
+      String outputfilename = path + File.pathSeparator + shortFilename;
+
+      outputToFile(outputfilename);
+   }
+
+   /**
+    * Output generated test file.
+    * 
+    * @param filename (full path filename with file extension)
+    */
    public void outputToFile(String filename) {
       // Convert the commands (including openTestSuite, etc.)
       // into a list of Strings and then write it to a file.

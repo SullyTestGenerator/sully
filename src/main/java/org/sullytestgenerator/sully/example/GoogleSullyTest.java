@@ -15,35 +15,23 @@
  */
 package org.sullytestgenerator.sully.example;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.sullytestgenerator.sully.SullyTestBase;
 
+/**
+ * An example class showing how to create a test suite file
+ * with two Selenium tests, output in the Katalon IDE format.
+ * 
+ * By default Sully formats using KatalonTestFormatter.java. 
+ * Other formats can be produced by implementing the 
+ * SullyTestFormatter.java interface.
+ *
+ */
 public class GoogleSullyTest extends SullyTestBase {
-
-   public static final boolean CREATE_AS_TEMP_FILE = true;
 
    public static final String SEARCH_BUTTON = "//input[@value='Google Search']";
    public static final String SEARCH_TEXTFIELD = "//input[@title='Search']";
 
    public void run() {
-      // Note: I usually put "_GEN" on the file name to highlight
-      // that this is a generated file and any changes may be overwritten.
-
-      // Full filename used if CREATE_AS_TEMP_FILE is false.
-      String outputfilename = "C:/GoogleSullyTest_GEN.html";
-
-      if (CREATE_AS_TEMP_FILE) {
-         try {
-            File temp = File.createTempFile("GoogleSullyTest_GEN", ".html");
-            outputfilename = temp.getAbsolutePath();
-         }
-         catch (IOException e) {
-            e.printStackTrace();
-         }
-      }
-
       // Open the overall test suite.
       openTestSuite("GoogleSullyTestSuite");
 
@@ -57,7 +45,10 @@ public class GoogleSullyTest extends SullyTestBase {
       // Generate the output.
       // By default, this method uses the KatalonTestFormatter
       // to produce Katalon IDE tests.
-      outputToFile(outputfilename);
+      outputToTempHtmlFile("GoogleSullyTest_GEN");
+      
+      // or to a specific file:  
+      // outputToFile("C:/temp/GoogleSullyTest_GEN.html");
    }
 
    protected void createTest_GoogleSearch() {
@@ -67,7 +58,7 @@ public class GoogleSullyTest extends SullyTestBase {
 
       // ---------------------------------------------------
       // Add a bunch of Sully comments and commands.
-      // For a fully list of commands, see: AllSeleniumCommands.java
+      // For a full list of commands, see: AllSeleniumCommands.java
 
       commentBlock("Test of Google search: 'Selenium IDE'");
 

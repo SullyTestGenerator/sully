@@ -39,7 +39,7 @@ import org.sullytestgenerator.sully.SullyTestBase;
  * 3. Read the Katalon test suite file into Katalon Recorder tool, see:
  * https://www.katalon.com/katalon-recorder-ide
  * 
- * 4. Use Katalon Reader tool to run/modify/extend the test steps.
+ * 4. Use Katalon Recorder tool to run/modify/extend the test steps.
  * 
  * 5. Save the modified Katalon test suite.
  * 
@@ -291,6 +291,17 @@ public class KatalonTestReader {
     * 2. The simple filename of the file to be read.
     * 
     * Any additional arguments are ignored.
+    * 
+    * With Eclipse, these arguments may be separate lines, so the
+    * output from generating a test file can be used by this
+    * class to read the test file.
+    * 
+    * For example, this output could be in the Arguments > Program arguments
+    * window when executing KatalonTestReader using Eclipse:
+    * 
+    *  C:\Users\Stephen\AppData\Local\Temp
+    *  GoogleSullyTest_GEN8367005133433190223.html
+    *  -----------------------------------
     * 
     * @param args
     */
