@@ -54,12 +54,22 @@ public class TestUrl {
 
    // -----------------------------------------------
 
-   public Map<Env, String> getUrlsByEnv() {
+   protected Map<Env, String> getUrlsByEnv() {
       return urlByEnv;
    }
 
-   public void setUrlsByEnv(Map<Env, String> urlsByEnv) {
+   protected void setUrlsByEnv(Map<Env, String> urlsByEnv) {
       this.urlByEnv = urlsByEnv;
+   }
+   
+   /**
+    * Return the web test URL, based on Env.
+    * 
+    * @param env
+    * @return
+    */
+   public String getUrl(Env env) {
+      return getUrlsByEnv().get(env);
    }
 
 }
