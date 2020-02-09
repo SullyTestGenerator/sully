@@ -146,10 +146,10 @@ public class KatalonTestReader {
    protected String determineCommand(String command, String arg1, String arg2Display) {
       String nextCommand = "command_" + command + "(\"" + arg1 + "\"" + arg2Display + ");";
 
-      if (command.equals("echo") && SullyTestBase.COMMENT_DASHED_LINE.equals(arg1)) {
+      if (command.equals("#") && SullyTestBase.COMMENT_DASHED_LINE.equals(arg1)) {
          nextCommand = "commentDashed();";
       }
-      else if (command.equals("echo") && arg1.startsWith(SullyTestBase.COMMENT_PREFIX)
+      else if (command.equals("#") && arg1.startsWith(SullyTestBase.COMMENT_PREFIX)
             && arg1.endsWith(SullyTestBase.COMMENT_POSTFIX)) {
 
          String trimCommand = arg1.substring(SullyTestBase.COMMENT_PREFIX.length(),
@@ -164,7 +164,7 @@ public class KatalonTestReader {
          nextCommand = "shortPause();";
       }
       else if (nextCommand.equals("command_pause(\"250\");")) {
-         nextCommand = "verySortPause();";
+         nextCommand = "veryShortPause();";
       }
       else if (nextCommand.equals("command_pause(\"10\");")) {
          nextCommand = "tinyPause();";

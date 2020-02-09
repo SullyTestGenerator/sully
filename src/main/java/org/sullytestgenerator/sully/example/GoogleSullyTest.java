@@ -16,6 +16,8 @@
 package org.sullytestgenerator.sully.example;
 
 import org.sullytestgenerator.sully.SullyTestBase;
+import org.sullytestgenerator.sully.domain.Env;
+import org.sullytestgenerator.sully.domain.User;
 
 /**
  * An example class showing how to create a test suite file
@@ -38,6 +40,8 @@ public class GoogleSullyTest extends SullyTestBase {
       // Call 'createTest' methods to create individual test cases.
       createTest_GoogleSearch();
       createTest_GoogleSearch2();
+      
+      createTest_CheckUser();
 
       // Close the overall test suite.
       closeTestSuite();
@@ -76,7 +80,7 @@ public class GoogleSullyTest extends SullyTestBase {
       command_highlight(SEARCH_BUTTON);
       veryShortPause();
       command_highlight(SEARCH_BUTTON);
-      veryShortPause();
+      tinyPause();
       commentDashed();
 
       highlightTwiceAndClick(SEARCH_BUTTON);
@@ -87,7 +91,7 @@ public class GoogleSullyTest extends SullyTestBase {
 
       command_waitForTextPresent("Getting started with Selenium IDE requires no");
       command_assertTextPresent("Getting started with Selenium IDE requires no");
-
+      longPause();
       commentDashed();
 
       // ---------------------------------------------------
@@ -98,33 +102,56 @@ public class GoogleSullyTest extends SullyTestBase {
    protected void createTest_GoogleSearch2() {
       openTest("Test 2 - Google search - Selenium IDE");
 
-      command_echo("---------------------------------------------");
-      command_echo("---------------------------------------------");
-      command_echo("-- Test of Google search: 'Selenium IDE' --");
-      command_echo("---------------------------------------------");
-      command_echo("---------------------------------------------");
+      commentBlock("Test of Google search: 'Selenium IDE'");
       command_open("https://google.com");
       command_waitForTextPresent("Store");
-      longPause();
+      shortPause();
       command_highlight("//input[@title='Search']");
       shortPause();
       command_type("//input[@title='Search']", "Selenium IDE");
-      command_pause("1000");
-      command_echo("-- Highlight 'Google Search' button twice. --");
+      shortPause();
+      comment("Highlight 'Google Search' button twice.");
       command_highlight("//input[@value='Google Search']");
       veryShortPause();
       command_highlight("//input[@value='Google Search']");
       tinyPause();
-      command_echo("---------------------------------------------");
-      command_click("//input[@value='Google Search']");
+      commentDashed();
+      highlightTwiceAndClick("//input[@value='Google Search']");
+      commentDashed();
+      highlightAndClick("//input[@value='Google Search']");
       command_waitForTextPresent("Getting started with Selenium IDE requires no");
       command_assertTextPresent("Getting started with Selenium IDE requires no");
-      command_echo("---------------------------------------------");
+      longPause();
+      commentDashed();
 
+      closeTest();
+   }
+   
+
+   protected void createTest_CheckUser() {
+      openTest("Test - Check User");
+
+      commentDashed();
+      commentDashed();
+      comment("Test - Check User name and password.");
+      commentDashed();
+      commentDashed();
+      
+      User myUserAccount = new User("myUserAccount", "pwSetInTheCode");
+      
+      myUserAccount.addPassword(Env.DEV, "devPwSetInCode");
+      
+      System.out.println("myUserAccount password: " + myUserAccount.password);
+      System.out.println("myUserAccount password: " + myUserAccount.getPassword());
+      
+      System.out.println("myUserAccount DEV password: " + myUserAccount.getPassword(Env.DEV));
+      
+      
       closeTest();
    }
 
    public static void main(String[] args) {
+      SullyTestBase.loadTestUsers(args);
 
       (new GoogleSullyTest()).run();
 

@@ -20,10 +20,15 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.sullytestgenerator.sully.command.AllSeleniumCommands;
 import org.sullytestgenerator.sully.command.SullyCommand;
+import org.sullytestgenerator.sully.domain.Env;
+import org.sullytestgenerator.sully.domain.UserEnv;
 import org.sullytestgenerator.sully.output.SullyTestFormatter;
 import org.sullytestgenerator.sully.output.katalon.KatalonTestFormatter;
 
@@ -61,6 +66,8 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
 
    private static final String CLOSE_TEST = "closeTest";
 
+   private static String userNamePasswordSeperator = ":";
+
    private List<SullyCommand> commands = new ArrayList<>();
 
    // Sleep (in msec) when running 'highlight' commands.
@@ -72,6 +79,115 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
 
    // By default use the KatalonTestFormatter.
    private SullyTestFormatter sullyTestFormatter = new KatalonTestFormatter();
+
+   // Map of UserEnv/password pairs of test users, passed in as Java program
+   // arguments.
+   // See: loadTestUsers()
+   private static Map<UserEnv, String> runtimeTestUsers = new HashMap<>();
+
+   /**
+    * This loads testUsers which can be used to override any passwords that have
+    * been set in the code.
+    * 
+    * This assumes the values are in the format: userName:password or
+    * userName:env:password.  (NOTE: The 'env' is case insensitive, but must
+    * match one of the Env enum values.)
+    * 
+    * To use, put this command at the beginning of your test class's main()
+    * method:
+    * 
+    * SullyTestBase.loadTestUsers(args);
+    * 
+    * --------------------------------------------------
+    * 
+    * For example: User tester4 = new User("testAccount4", "pw77667");
+    * 
+    * Java program arguments: testAccount4:runtimepw223
+    * 
+    * Then when run, tester4.getPassword() --> runtimepw223
+    * 
+    * --------------------------------------------------
+    * 
+    * An example with an 'env' value:
+    * 
+    * User tester8 = new User("testAccount8"); 
+    * tester8.addPassword(Env.DEV, "pwDev882244");
+    * tester8.addPassword(Env.TEST, "pwTest882244");
+    * 
+    * Java program arguments: 
+    * 
+    *     testAccount8:dev:runtimepw997
+    *     testAccount8:prod:runtimeProd223
+    * 
+    * Then when run: 
+    *     tester8.getPassword(Env.DEV)  --> runtimepw997
+    *     tester8.getPassword(Env.TEST) --> pwTest882244
+    *     tester8.getPassword(Env.PROD) --> runtimeProd223
+    * 
+    * @param args
+    */
+   public static void loadTestUsers(String[] args) {
+
+      if (args.length >= 1) {
+
+         for (String nextTestUser : args) {
+            String password = null;
+            String envString = null;
+            Env env = null;
+
+            StringTokenizer st = new StringTokenizer(nextTestUser, userNamePasswordSeperator);
+            String userName = st.nextToken().trim();
+            String secondToken = st.nextToken().trim();
+
+            if (st.hasMoreTokens()) {
+               // Format: userName:env:password
+               envString = secondToken;
+               password = st.nextToken().trim();
+            }
+            else {
+               // Format: userName:password
+               password = secondToken;
+            }
+
+            if (envString != null) {
+               env = Env.valueOf(envString.toUpperCase());
+            }
+
+            runtimeTestUsers.put(new UserEnv(userName, env), password);
+         }
+      }
+      else {
+         System.out.println("To load testUsers, set program arguments to a list of");
+         System.out.println("userName:password or userName:env:password values.");
+         System.out.println("The value of 'env' must match one of the Env enum");
+         System.out.println("values (ignoring case).  Examples:");
+         System.out.println("");
+         System.out.println("myUserName:myPassword345");
+         System.out.println("myUserName:test:myOtherPassword997");
+         System.out.println("devUser:dev:thatPw56");
+         System.out.println("ProdTestUsr:prod:hereWeGo99");
+         System.out.println("-----------------------------------------------------");
+      }
+   }
+
+   public static String checkRuntimePassword(String userName, Env env) {
+      UserEnv key = new UserEnv(userName, env);
+
+      String result = runtimeTestUsers.get(key);
+
+      return result;
+   }
+
+   /**
+    * Use this to change the delimiter character between the userName and password
+    * (and optionally the env) if the default character ":" is part of the userName
+    * or password.
+    * 
+    * @param value
+    */
+   public static void setUserNamePasswordSeperator(String value) {
+      userNamePasswordSeperator = value;
+   }
 
    public int getHighlightPauseMsec() {
       return highlightPauseMsec;
@@ -143,8 +259,8 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
    // -----------------------------------------------------------------------------------
 
    /**
-    * Outputs to a Java 'temp' file with the chose filenamePrefix
-    * and a filename extension of ".html".
+    * Outputs to a Java 'temp' file with the chose filenamePrefix and a filename
+    * extension of ".html".
     * 
     * e.g.,
     * 
@@ -157,9 +273,10 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
    public void outputToTempHtmlFile(String filenamePrefix) {
       outputToTempFile(filenamePrefix, ".html");
    }
-       
+
    /**
-    * Outputs to a Java 'temp' file with the chose filenamePrefix and fileExtension.
+    * Outputs to a Java 'temp' file with the chose filenamePrefix and
+    * fileExtension.
     * 
     * e.g.,
     * 
@@ -198,7 +315,7 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
       if (path != null && (path.endsWith("/") || path.endsWith("\\") || path.endsWith(File.pathSeparator))) {
          path = path.substring(0, path.length() - 1);
       }
-      String outputfilename = path + File.pathSeparator + shortFilename;
+      String outputfilename = path + File.separator + shortFilename;
 
       outputToFile(outputfilename);
    }
@@ -283,7 +400,7 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
    // Comment 'commands'.
 
    public void comment(String comment) {
-      command_echo(COMMENT_PREFIX + comment + COMMENT_POSTFIX);
+      command_comment(COMMENT_PREFIX + comment + COMMENT_POSTFIX);
    }
 
    public void commentBlock(String comment) {
@@ -295,7 +412,7 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
    }
 
    public void commentDashed() {
-      command_echo(COMMENT_DASHED_LINE);
+      command_comment(COMMENT_DASHED_LINE);
    }
 
    // -----------------------------------------------------------------------------------

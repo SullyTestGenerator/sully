@@ -38,5 +38,10 @@ public enum Env {
 
    // production
    PROD;
+   
+   
+   public String nameLowerCase() {
+      return this.name().toLowerCase();
+   }
 
 }

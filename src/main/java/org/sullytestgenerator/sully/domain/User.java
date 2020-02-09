@@ -18,10 +18,15 @@ package org.sullytestgenerator.sully.domain;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.sullytestgenerator.sully.SullyTestBase;
+
 /**
  * Class to store username and password.
  * 
  * Different passwords may be stored for different environments.
+ * 
+ * Passwords may be set at runtime so they are not stored in code.
+ * See: SullyTestBase.loadTestUsers()
  *
  */
 public class User {
@@ -41,8 +46,25 @@ public class User {
    public User(String userName, String password) {
       super();
       this.userName = userName;
-      this.password = password;
+      
+      // Check if the password should be overridden by a value
+      //  passed in the JVM program arguments.
+      String finalPassword = findFinalPassword(userName, null, password);
+      setPassword(finalPassword);
    }
+   
+   
+   protected String findFinalPassword(String userName, Env env, String password) {
+      String result = password;
+      String runtimePassword = SullyTestBase.checkRuntimePassword(userName, env);
+      
+      if (runtimePassword != null) {
+         result = runtimePassword;
+      }
+      
+      return result;
+   }
+   
 
    /**
     * Store passwords based on environment.
@@ -60,11 +82,14 @@ public class User {
     */
    public User addPassword(Env env, String password) {
       if (env != null) {
-         passwordsByEnv.put(env, password);
+         String finalPassword = findFinalPassword(userName, env, password);
+         
+         passwordsByEnv.put(env, finalPassword);
       }
 
       return this;
    }
+
 
    /**
     * Returns the password for a given environment.
@@ -91,7 +116,7 @@ public class User {
       return userName;
    }
 
-   public void setUserName(String userName) {
+   protected void setUserName(String userName) {
       this.userName = userName;
    }
 
@@ -99,16 +124,15 @@ public class User {
       return password;
    }
 
-   public void setPassword(String password) {
+   /**
+    * Better to set the password in this class's constructor
+    * or using the addPassword(Env, String) method.
+    * 
+    * @param password
+    */
+   protected void setPassword(String password) {
+      
       this.password = password;
-   }
-
-   public Map<Env, String> getPasswordsByEnv() {
-      return passwordsByEnv;
-   }
-
-   public void setPasswordsByEnv(Map<Env, String> passwordsByEnv) {
-      this.passwordsByEnv = passwordsByEnv;
    }
 
 }

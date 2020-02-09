@@ -592,6 +592,10 @@ public abstract class AllSeleniumCommands {
    protected void command_close() {
       addCommand("close", null, null);
    }
+   
+   protected void command_comment(String comment) {
+      addCommand("comment", comment, null);
+   }
 
    protected void command_contextMenu(String locator) {
       addCommand("contextMenu", locator, null);

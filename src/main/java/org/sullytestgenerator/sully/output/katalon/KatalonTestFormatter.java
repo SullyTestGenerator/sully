@@ -77,6 +77,11 @@ public class KatalonTestFormatter implements SullyTestFormatter {
       if (arg2 == null) {
          arg2 = "";
       }
+      
+      if (command.equals("comment")) {
+         command = "#";
+      }
+      
       String datalistOption = "<datalist><option>" + arg1 + "</option></datalist>";
 
       String nextRow = "<td>" + command + "</td><td>" + arg1 + datalistOption + "</td><td>" + arg2 + "</td>";
