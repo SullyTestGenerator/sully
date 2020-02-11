@@ -28,6 +28,7 @@ import java.util.StringTokenizer;
 import org.sullytestgenerator.sully.command.AllSeleniumCommands;
 import org.sullytestgenerator.sully.command.SullyCommand;
 import org.sullytestgenerator.sully.domain.Env;
+import org.sullytestgenerator.sully.domain.User;
 import org.sullytestgenerator.sully.domain.UserEnv;
 import org.sullytestgenerator.sully.output.SullyTestFormatter;
 import org.sullytestgenerator.sully.output.katalon.KatalonTestFormatter;
@@ -154,6 +155,8 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
             }
 
             runtimeTestUsers.put(new UserEnv(userName, env), password);
+            
+            applyNewPasswords();
          }
       }
       else {
@@ -169,12 +172,59 @@ public class SullyTestBase extends AllSeleniumCommands implements SullyTestForma
          System.out.println("-----------------------------------------------------");
       }
    }
+   
+   public static void applyNewPasswords() {
+      for (UserEnv nextUserEnv : runtimeTestUsers.keySet()) {
+         String userNameUpper = nextUserEnv.userName.toUpperCase();
+         Env env = nextUserEnv.env;
+         
+         User matchingUser = findMatchingUser(userNameUpper);
+         
+         if (matchingUser != null) {
+            String currentPassword = matchingUser.getPassword(nextUserEnv.env);
+            String finalPassword = findFinalPassword(matchingUser.userName, env, currentPassword);
+            
+            if (env == null) {
+               // Set the non-env password.
+               matchingUser.password = finalPassword;
+            }
+            else {
+               // Overwrite the env specific password.
+               matchingUser.passwordsByEnv.put(env, finalPassword);
+            }
+         }
+      }
+   }
+   
+   private static User findMatchingUser(String userNameUpper) {
+      User matchingUser = null;
+      
+      for (User nextUser : User.allUsers) {
+         if (nextUser.userName.equalsIgnoreCase(userNameUpper)) {
+            matchingUser = nextUser;
+            break;
+         }
+      }
+      
+      return matchingUser;
+   }
 
    public static String checkRuntimePassword(String userName, Env env) {
       UserEnv key = new UserEnv(userName, env);
 
       String result = runtimeTestUsers.get(key);
 
+      return result;
+   }
+   
+   public static String findFinalPassword(String userName, Env env, String password) {
+      String result = password;
+      String runtimePassword = SullyTestBase.checkRuntimePassword(userName, env);
+      
+      if (runtimePassword != null) {
+         result = runtimePassword;
+      }
+      
       return result;
    }
 

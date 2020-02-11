@@ -16,8 +16,6 @@
 package org.sullytestgenerator.sully.example;
 
 import org.sullytestgenerator.sully.SullyTestBase;
-import org.sullytestgenerator.sully.domain.Env;
-import org.sullytestgenerator.sully.domain.User;
 
 /**
  * An example class showing how to create a test suite file
@@ -32,7 +30,7 @@ public class GoogleSullyTest extends SullyTestBase {
 
    public static final String SEARCH_BUTTON = "//input[@value='Google Search']";
    public static final String SEARCH_TEXTFIELD = "//input[@title='Search']";
-
+   
    public void run() {
       // Open the overall test suite.
       openTestSuite("GoogleSullyTestSuite");
@@ -41,8 +39,6 @@ public class GoogleSullyTest extends SullyTestBase {
       createTest_GoogleSearch();
       createTest_GoogleSearch2();
       
-      createTest_CheckUser();
-
       // Close the overall test suite.
       closeTestSuite();
 
@@ -127,29 +123,6 @@ public class GoogleSullyTest extends SullyTestBase {
       closeTest();
    }
    
-
-   protected void createTest_CheckUser() {
-      openTest("Test - Check User");
-
-      commentDashed();
-      commentDashed();
-      comment("Test - Check User name and password.");
-      commentDashed();
-      commentDashed();
-      
-      User myUserAccount = new User("myUserAccount", "pwSetInTheCode");
-      
-      myUserAccount.addPassword(Env.DEV, "devPwSetInCode");
-      
-      System.out.println("myUserAccount password: " + myUserAccount.password);
-      System.out.println("myUserAccount password: " + myUserAccount.getPassword());
-      
-      System.out.println("myUserAccount DEV password: " + myUserAccount.getPassword(Env.DEV));
-      
-      
-      closeTest();
-   }
-
    public static void main(String[] args) {
       SullyTestBase.loadTestUsers(args);
 

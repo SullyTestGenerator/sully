@@ -37,7 +37,7 @@ public class TestUrl {
     *    xyzApplication
     *    .addUrl(Env.LCL, "http://localhost:8080/myApp")
     *    .addUrl(Env.DEV, "https://dev.xyzapp")
-    *    .addUrl(Env.TEST, "https://tst.xyzapp")
+    *    .addUrl(Env.TEST, "https://tst.xyzapp/")
     *    .addUrl(Env.PROD, "https://www.xyzapp.com");
     * 
     * @param env
@@ -46,6 +46,9 @@ public class TestUrl {
     */
    public TestUrl addUrl(Env env, String url) {
       if (env != null) {
+         if (!url.endsWith("/")) {
+            url += "/";
+         }
          urlByEnv.put(env, url);
       }
 

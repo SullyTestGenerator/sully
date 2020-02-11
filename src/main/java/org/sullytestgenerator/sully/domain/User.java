@@ -15,7 +15,9 @@
  */
 package org.sullytestgenerator.sully.domain;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.sullytestgenerator.sully.SullyTestBase;
@@ -30,6 +32,8 @@ import org.sullytestgenerator.sully.SullyTestBase;
  *
  */
 public class User {
+   
+   public static List<User> allUsers = new ArrayList<>();
 
    public String userName = null;
 
@@ -49,22 +53,13 @@ public class User {
       
       // Check if the password should be overridden by a value
       //  passed in the JVM program arguments.
-      String finalPassword = findFinalPassword(userName, null, password);
+      String finalPassword = SullyTestBase.findFinalPassword(userName, null, password);
       setPassword(finalPassword);
+      
+      allUsers.add(this);
    }
    
-   
-   protected String findFinalPassword(String userName, Env env, String password) {
-      String result = password;
-      String runtimePassword = SullyTestBase.checkRuntimePassword(userName, env);
-      
-      if (runtimePassword != null) {
-         result = runtimePassword;
-      }
-      
-      return result;
-   }
-   
+ 
 
    /**
     * Store passwords based on environment.
@@ -82,7 +77,7 @@ public class User {
     */
    public User addPassword(Env env, String password) {
       if (env != null) {
-         String finalPassword = findFinalPassword(userName, env, password);
+         String finalPassword = SullyTestBase.findFinalPassword(userName, env, password);
          
          passwordsByEnv.put(env, finalPassword);
       }
